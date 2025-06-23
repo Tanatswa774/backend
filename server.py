@@ -12,9 +12,12 @@ CORS(app)
 
 bot_thread: Optional[threading.Thread] = None
 bot_lock = threading.Lock()
-stop_signal = False
 
-@app.route('/start', methods=['POST'])
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({"message": "Server is running"})
+
+@app.route('/start', methods=['POST'])  # ✅ POST explicitly declared here
 def start_bot():
     global bot_thread
     with bot_lock:
@@ -25,13 +28,13 @@ def start_bot():
         bot_thread.start()
         return jsonify({"message": "Bot started"})
 
-@app.route('/stop', methods=['POST'])
+@app.route('/stop', methods=['POST'])  # ✅ POST explicitly declared here
 def stop_bot():
     with bot_lock:
         if not bot_state.bot_running:
             return jsonify({"message": "Bot is not running"}), 409
         bot_state.bot_running = False
-        return jsonify({"message": "Stopping bot"})
+        return jsonify({"message": "Bot stopping"})
 
 @app.route('/status', methods=['GET'])
 def status():
@@ -42,10 +45,10 @@ def status():
 
 @app.route('/screenshot', methods=['GET'])
 def screenshot():
-    screenshot_path = os.path.abspath("screenshot.png")
-    if not os.path.exists(screenshot_path):
-        return jsonify({"error": "No screenshot available"}), 404
-    return send_file(screenshot_path, mimetype='image/png')
+    path = os.path.abspath("screenshot.png")
+    if not os.path.exists(path):
+        return jsonify({"error": "No screenshot found"}), 404
+    return send_file(path, mimetype='image/png')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)

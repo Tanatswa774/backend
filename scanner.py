@@ -6,10 +6,8 @@ def find_template(screen_path: str, template_path: str, threshold: float = 0.75)
     template = cv2.imread(template_path)
 
     if screen is None or template is None:
-        raise FileNotFoundError("Missing screen or template image.")
+        raise FileNotFoundError("Screenshot or template missing.")
 
     result = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
     locations = np.where(result >= threshold)
-
-    matches = list(zip(*locations[::-1]))  # Convert to (x, y)
-    return matches
+    return list(zip(*locations[::-1]))
