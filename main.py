@@ -1,4 +1,3 @@
-
 import time
 import threading
 import bot_state
@@ -60,3 +59,10 @@ def gather_gems():
                     print("Gather button not found.")
                 return  # Stop after finding 1 gem
     print("No gems found.")
+
+# ✅ This was missing and needed for server.py to import
+def run_bot_loop():
+    while bot_state.bot_running:
+        gather_gems()
+        swipe_map()
+        time.sleep(3)
